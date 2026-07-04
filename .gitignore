@@ -1,0 +1,13 @@
+# Local environment and logs
+.env
+data/logs/
+
+# Generated Jetson/TensorRT artifacts
+models/*.engine
+
+# Docker image export is too large for a normal GitHub repository.
+gaitpass-jetson-image.tar.gz
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

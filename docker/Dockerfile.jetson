@@ -1,0 +1,46 @@
+ARG L4T_TAG=r35.4.1
+FROM nvcr.io/nvidia/l4t-jetpack:${L4T_TAG}
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
+
+WORKDIR /workspace/gaitpass
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    python3-pip \
+    python3-dev \
+    python3-opencv \
+    python3-numpy \
+    ffmpeg \
+    v4l-utils \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-jetson.txt ./requirements-jetson.txt
+RUN python3 -m pip install --upgrade pip setuptools wheel \
+    && python3 -m pip install -r requirements-jetson.txt \
+    && CUDA_INC_DIR=/usr/local/cuda/include python3 -m pip install --no-cache-dir pycuda
+
+# Optional: GPU/TensorRT execution for onnxruntime on JetPack 5.x.
+# requirements-jetson.txt installs the CPU provider, which is enough to bring
+# the pipeline up but slow for the live demo. Download the onnxruntime-gpu
+# wheel matching your JetPack from https://elinux.org/Jetson_Zoo#ONNX_Runtime
+# into docker/, then uncomment:
+# COPY docker/onnxruntime_gpu-*.whl /tmp/
+# RUN python3 -m pip install --force-reinstall /tmp/onnxruntime_gpu-*.whl \
+#     && rm -f /tmp/onnxruntime_gpu-*.whl
+
+COPY app ./app
+COPY scripts ./scripts
+COPY docker/entrypoint.sh ./docker/entrypoint.sh
+
+RUN chmod +x ./docker/entrypoint.sh
+
+EXPOSE 18080
+
+ENTRYPOINT ["./docker/entrypoint.sh"]
