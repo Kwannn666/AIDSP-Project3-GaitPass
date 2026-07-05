@@ -182,6 +182,12 @@ keypoint-sequence gait features, gallery matching, and tailgating alerts. The
 HOG/box-feature path is kept as a no-model fallback and as the report baseline
 to compare against the pose-based features.
 
+## License
+
+Original project files in this repository are released under the MIT License.
+Third-party model weights, exported model files, and other external assets
+remain under their original upstream licenses. See `THIRD_PARTY_NOTICES.md`.
+
 ## 繳交版快速啟動 (For Grading)
 
 收到繳交壓縮檔後，在 Jetson Xavier 上依序執行即可開啟展示系統。
